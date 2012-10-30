@@ -1,0 +1,17 @@
+html
+  head
+    title PhotoBlog
+    = stylesheet_link_tag "application", :media => "all"
+    = javascript_include_tag "application"
+    = csrf_meta_tags 
+  body
+    #logo.align-center
+      = image_tag "CJsPhotoBlogLogo.png", :alt => "Site Logo" 
+    #navigation.align-center
+      | Home | About | Flickr
+    #content
+      = yield
+    #footer.align-center
+      | Copyright 
+      = Time.now.year
+      |  JohnsonCH, LLC
