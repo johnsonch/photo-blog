@@ -1,30 +1,22 @@
 require 'bundler/capistrano'
 set :default_environment, { 'PATH' => "'/home/johnsonch/bin:/home/johnsonch/.gems/bin:/home/johnsonch/.gems/bin:/usr/lib/ruby/gems/1.8/bin/:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games'"}
-####################################################
-#
 set :user, 'johnsonch'
 set :application, 'photoblog.johnsonch.com'
 set :applicationdir, "/home/johnsonch/photoblog.johnsonch.com"
-set :repository, "git://github.com/johnsonch/photo-blog.git" 
-
-# =============================================================================
-# You shouldn't have to modify the rest of these
-# =============================================================================
+set :deploy_to, applicationdir
+set :repository, "."
+set :local_repository, "file://."
+set :use_sudo, false
+set :scm, "git"
+set :deploy_via, :copy
 
 role :web, application
 role :app, application
 role :db,  application, :primary => true
-set :branch, "capistrano"
 
-set :use_sudo, false
-set :scm, "git"
-# saves space by only keeping last 3 when running cleanup
-set :keep_releases, 3 
+# if you want to clean up old releases on each deploy uncomment this:
+after "deploy:restart", "deploy:cleanup"
 
-# issues svn export instead of checkout
-
-#set :deploy_via, :copy
-set :deploy_to, applicationdir
 ssh_options[:paranoid] = false
 
 # =============================================================================
