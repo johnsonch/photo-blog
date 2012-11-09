@@ -32,3 +32,5 @@ group :test do
   gem "capybara", :group => [:development, :test]
   gem "rspec-rails", ">= 2.0.1", :group => [:development, :test]
 end
+
+gem "capistrano"
