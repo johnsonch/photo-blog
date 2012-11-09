@@ -1,36 +1,4 @@
 require 'bundler/capistrano'
-#set :user, 'johnsonch'
-#set :domain, 'johnsonch.com'
-#set :applicationdir, "photoblog.johnsonch.com"
- 
-#set :scm, 'git'
-#set :repository,  "git://github.com/johnsonch/photo-blog.git"
-#set :local_repository, 'file://.git'
-#set :branch, 'capistrano'
-#set :scm_verbose, true
- 
-# roles (servers)
-#role :web, domain
-#role :app, domain
-#role :db,  domain, :primary => true
- 
-# deploy config
-#set :deploy_to, applicationdir
-#set :deploy_via, :copy
- 
-# additional settings
-#default_run_options[:pty] = true  # Forgo errors when deploying from windows
-#ssh_options[:keys] = %w(/home/user/.ssh/id_rsa)            # If you are using ssh_keysset :chmod755, "app config db lib public vendor script script/* public/disp*"
-#set :use_sudo, false
- 
-# Passenger
-#namespace :deploy do
-  #task :start do ; end
-  #task :stop do ; end
-  #task :restart, :roles => :app, :except => { :no_release => true } do
-    #run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-  #end
-#end
 set :default_environment, { 'PATH' => "'/home/johnsonch/bin:/home/johnsonch/.gems/bin:/home/johnsonch/.gems/bin:/usr/lib/ruby/gems/1.8/bin/:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games'"}
 ####################################################
 #
@@ -66,6 +34,16 @@ namespace :deploy do
   desc "Restart Passenger" 
   task :restart, :roles => :app do
     run "touch #{current_path}/tmp/restart.txt" 
+  end
+  namespace :assets do
+    task :precompile, :roles => :web, :except => { :no_release => true } do
+      from = source.next_revision(current_revision)
+      if capture("cd #{latest_release} && #{source.local.log(from)} vendor/assets/ app/assets/ | wc -l").to_i > 0
+        run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:precompile}
+      else
+        logger.info "Skipping asset pre-compilation because there were no asset changes"
+      end
+    end
   end
 end
 namespace :db do
