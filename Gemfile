@@ -33,4 +33,8 @@ group :test do
   gem "rspec-rails", ">= 2.0.1", :group => [:development, :test]
 end
 
+group :production do
+  gem "mysql"
+end
+
 gem "capistrano"
